@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -62,6 +62,22 @@ export default function RootLayout() {
                   <Ionicons name="chevron-back" size={24} color="#fff" />
                 </TouchableOpacity>
               ) : null,
+            headerRight: () => (
+              <View style={styles.headerRightContainer}>
+                <TouchableOpacity
+                  // onPress={() => router.push('/search')}
+                  style={styles.headerButton}
+                >
+                  <Ionicons name="search" size={28} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  // onPress={() => router.push('/messages')}
+                  style={styles.headerButton}
+                >
+                  <Ionicons name="chatbubble-ellipses-outline" size={28} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            ),
           }}
         >
           <Stack.Screen 
@@ -78,3 +94,15 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  headerRightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: -3,
+    gap: 7,
+  },
+  headerButton: {
+    padding: 5,
+  },
+});

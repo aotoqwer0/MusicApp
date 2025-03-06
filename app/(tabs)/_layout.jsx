@@ -58,6 +58,7 @@ export default function TabLayout() {
         name="short"
         options={{
           title: 'Short',
+          headerShown: false,
           tabBarIcon: ({ color }) => <Icon name="airplane" size={24} color={color} />,
         }}
       />

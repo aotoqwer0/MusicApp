@@ -11,18 +11,24 @@ type GenreGridProps = {
 };
 
 const GenreGrid: FC<GenreGridProps> = ({ genres = [] }) => {
-  // デフォルトは8ジャンルの例
   const genreList = genres.length
     ? genres
     : ['Rock', 'Jazz', 'Pop', 'Hip-Hop', 'Electronic', 'Classical', 'Reggae', 'Blues'];
 
-  // 2アイテムずつの配列に変換（横スクロール時、各列が縦2段となる）
+  // 2列に分割する配列を作成
   const columns = useMemo(() => {
-    const result = [];
-    for (let i = 0; i < genreList.length; i += 2) {
-      result.push(genreList.slice(i, i + 2));
-    }
-    return result;
+    const leftColumn = [];
+    const rightColumn = [];
+    
+    genreList.forEach((genre, index) => {
+      if (index % 2 === 0) {
+        leftColumn.push(genre);
+      } else {
+        rightColumn.push(genre);
+      }
+    });
+    
+    return [leftColumn, rightColumn];
   }, [genreList]);
 
   const getGenreGradient = (genre: string): [string, string] => {
@@ -41,53 +47,57 @@ const GenreGrid: FC<GenreGridProps> = ({ genres = [] }) => {
 
   return (
     <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContainer}
     >
-      {columns.map((column, colIndex) => (
-        <View key={colIndex} style={styles.column}>
-          {column.map((genre, index) => (
-            <TouchableOpacity 
-              key={index} 
-              activeOpacity={0.8} 
-              style={styles.buttonContainer}
-              onPress={() => router.push(`/select_music/genre/${genre}`)}
-            >
-              <LinearGradient
-                colors={getGenreGradient(genre)}
-                style={styles.genreButton}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+      <View style={styles.gridContainer}>
+        {columns.map((column, colIndex) => (
+          <View key={colIndex} style={styles.column}>
+            {column.map((genre, index) => (
+              <TouchableOpacity 
+                key={index} 
+                activeOpacity={0.8} 
+                style={styles.buttonContainer}
+                onPress={() => router.push(`/select_music/genre/${genre}`)}
               >
-                <View style={styles.contentContainer}>
-                  <Text 
-                    style={styles.genreText}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                  >
-                    {genre}
-                  </Text>
-                  <Text style={styles.subText}>
-                    {`${Math.floor(Math.random() * 100) + 50} Playlists`}
-                  </Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ))}
+                <LinearGradient
+                  colors={getGenreGradient(genre)}
+                  style={styles.genreButton}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <View style={styles.contentContainer}>
+                    <Text 
+                      style={styles.genreText}
+                      numberOfLines={1}
+                    >
+                      {genre}
+                    </Text>
+                    <Text style={styles.subText}>
+                      {`${Math.floor(Math.random() * 100) + 50} Playlists`}
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ))}
+      </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   scrollContainer: {
+    paddingVertical: 10,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 10,
   },
   column: {
-    flexDirection: 'column',
-    marginHorizontal: 5,
+    width: width * 0.45, // 画面幅の45%
   },
   buttonContainer: {
     marginVertical: 10,
@@ -98,8 +108,8 @@ const styles = StyleSheet.create({
     elevation: 24,
   },
   genreButton: {
-    width: width * 0.38,
-    height: width * 0.38,
+    width: '100%',
+    aspectRatio: 1, // 正方形を維持
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'flex-start',
